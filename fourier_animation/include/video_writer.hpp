@@ -77,10 +77,10 @@ private:
  * @brief Common video resolutions
  */
 struct VideoResolution {
-    static constexpr cv::Size HD{1280, 720};
-    static constexpr cv::Size FULL_HD{1920, 1080};
-    static constexpr cv::Size QHD{2560, 1440};
-    static constexpr cv::Size UHD_4K{3840, 2160};
+    inline static const cv::Size HD{1280, 720};
+    inline static const cv::Size FULL_HD{1920, 1080};
+    inline static const cv::Size QHD{2560, 1440};
+    inline static const cv::Size UHD_4K{3840, 2160};
 };
 
 } // namespace fourier
