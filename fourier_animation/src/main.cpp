@@ -145,6 +145,17 @@ int main(int argc, char* argv[]) {
         }
     }
     
+    // Add 2-second pause at the end
+    if (animConfig.totalFrames > 0) {
+        std::cout << "Adding 2-second pause (" << (videoConfig.fps * 2) << " frames)..." << std::endl;
+        cv::Mat lastFrame = animator.renderFrame(animConfig.totalFrames - 1);
+        int pauseFrames = static_cast<int>(videoConfig.fps * 2);
+        
+        for (int i = 0; i < pauseFrames; ++i) {
+            videoWriter.writeFrame(lastFrame);
+        }
+    }
+
     videoWriter.release();
     
     auto endTime = std::chrono::high_resolution_clock::now();

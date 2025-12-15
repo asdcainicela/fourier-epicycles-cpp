@@ -154,7 +154,7 @@ cv::Point AnimationEngine::worldToScreen(const cv::Point2d& worldPoint) const {
     // Transform from world coordinates to screen coordinates
     // World Y is inverted for screen (screen Y increases downward)
     int screenX = static_cast<int>(config.center.x + worldPoint.x * config.scale);
-    int screenY = static_cast<int>(config.center.y - worldPoint.y * config.scale);
+    int screenY = static_cast<int>(config.center.y + worldPoint.y * config.scale);
     
     return cv::Point(screenX, screenY);
 }
