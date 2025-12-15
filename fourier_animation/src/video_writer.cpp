@@ -1,5 +1,6 @@
 #include "video_writer.hpp"
 #include <opencv2/videoio.hpp>
+#include <opencv2/imgproc.hpp>
 #include <iostream>
 
 namespace fourier {
