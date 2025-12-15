@@ -21,6 +21,7 @@ void printUsage(const char* programName) {
               << "  --no-vectors            Hide radius vectors\n"
               << "  --no-path               Hide traced path\n"
               << "  --samples <num>         Contour sample points (default: 500)\n"
+              << "  --cpu                   Force CPU encoding (FFmpeg) instead of hardware encoding\n"
               << "  --help                  Show this help message\n"
               << std::endl;
 }
@@ -78,6 +79,8 @@ int main(int argc, char* argv[]) {
             animConfig.showPath = false;
         } else if (arg == "--samples" && i + 1 < argc) {
             contourConfig.numSamplePoints = std::stoi(argv[++i]);
+        } else if (arg == "--cpu") {
+            videoConfig.useHardwareEncoding = false;
         }
     }
     
