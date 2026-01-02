@@ -1,7 +1,8 @@
 #include "fourier.hpp"
-#include "colors.hpp"
+#include <kissfft.hh>
 #include <algorithm>
 #include <cmath>
+#include <random>
 
 namespace fourier {
 
@@ -13,39 +14,44 @@ std::vector<FourierCoefficient> computeDFT(
     int numCircles
 ) {
     const int N = static_cast<int>(points.size());
+    if (N == 0) return {};
+    
+    // Use KissFFT for the transform
+    kissfft<double> fft(N, false);  // false = forward transform
+    
+    std::vector<std::complex<double>> fftResult(N);
+    fft.transform(points.data(), fftResult.data());
+    
+    // Convert FFT result to FourierCoefficients
     std::vector<FourierCoefficient> coefficients;
     coefficients.reserve(N);
     
-    // Compute all frequency components
-    for (int n = -N/2; n < N/2; ++n) {
-        std::complex<double> sum(0.0, 0.0);
-        
-        for (int k = 0; k < N; ++k) {
-            double angle = -TWO_PI * n * k / N;
-            std::complex<double> exp_term(std::cos(angle), std::sin(angle));
-            sum += points[k] * exp_term;
-        }
-        
-        sum /= static_cast<double>(N);
+    // Random generator for colors
+    std::mt19937 rng(42);
+    std::uniform_int_distribution<int> dist(0, 255);
+    
+    for (int i = 0; i < N; ++i) {
+        // Convert index to frequency (-N/2 to N/2)
+        int n = (i < N/2) ? i : i - N;
         
         FourierCoefficient coef;
         coef.frequency = n;
-        coef.cn = sum;
-        coef.amplitude = std::abs(sum);
-        coef.phase = std::arg(sum);
-        coef.color = getRandomColor(static_cast<unsigned int>(n + 10000));
+        coef.cn = fftResult[i] / static_cast<double>(N);  // Normalize
+        coef.amplitude = std::abs(coef.cn);
+        coef.phase = std::arg(coef.cn);
+        coef.color = cv::Scalar(dist(rng), dist(rng), dist(rng));
         
         coefficients.push_back(coef);
     }
     
-    // Sort by amplitude (largest first) for better visual effect
+    // Sort by amplitude (largest first)
     std::sort(coefficients.begin(), coefficients.end(),
         [](const FourierCoefficient& a, const FourierCoefficient& b) {
             return a.amplitude > b.amplitude;
         }
     );
     
-    // Keep only the requested number of circles
+    // Keep only requested number of circles
     if (numCircles > 0 && numCircles < static_cast<int>(coefficients.size())) {
         coefficients.resize(numCircles);
     }
@@ -86,40 +92,6 @@ std::vector<cv::Point2d> getEpicyclePositions(
     }
     
     return positions;
-}
-
-// Cooley-Tukey FFT (for power-of-2 sizes)
-std::vector<std::complex<double>> computeFFT(
-    const std::vector<std::complex<double>>& points
-) {
-    const int N = static_cast<int>(points.size());
-    
-    if (N <= 1) return points;
-    
-    // Split into even and odd
-    std::vector<std::complex<double>> even, odd;
-    even.reserve(N / 2);
-    odd.reserve(N / 2);
-    
-    for (int i = 0; i < N; i += 2) {
-        even.push_back(points[i]);
-        if (i + 1 < N) odd.push_back(points[i + 1]);
-    }
-    
-    // Recursive FFT
-    auto fftEven = computeFFT(even);
-    auto fftOdd = computeFFT(odd);
-    
-    // Combine
-    std::vector<std::complex<double>> result(N);
-    for (int k = 0; k < N / 2; ++k) {
-        double angle = -TWO_PI * k / N;
-        std::complex<double> w(std::cos(angle), std::sin(angle));
-        result[k] = fftEven[k] + w * fftOdd[k];
-        result[k + N / 2] = fftEven[k] - w * fftOdd[k];
-    }
-    
-    return result;
 }
 
 } // namespace fourier

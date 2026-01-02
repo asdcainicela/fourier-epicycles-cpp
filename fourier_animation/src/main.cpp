@@ -2,7 +2,6 @@
 #include <string>
 #include <chrono>
 
-#include "colors.hpp"
 #include "fourier.hpp"
 #include "contour_extractor.hpp"
 #include "animation.hpp"

@@ -50,13 +50,4 @@ std::vector<cv::Point2d> getEpicyclePositions(
     double t
 );
 
-/**
- * @brief Compute FFT using Cooley-Tukey algorithm (optimized)
- * @param points Input complex points (size should be power of 2)
- * @return FFT result
- */
-std::vector<std::complex<double>> computeFFT(
-    const std::vector<std::complex<double>>& points
-);
-
 } // namespace fourier

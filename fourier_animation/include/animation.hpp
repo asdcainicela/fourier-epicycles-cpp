@@ -1,7 +1,6 @@
 #pragma once
 
 #include "fourier.hpp"
-#include "colors.hpp"
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <vector>
@@ -82,38 +81,22 @@ private:
     class Impl;
     std::unique_ptr<Impl> pImpl;
     
-    /**
-     * @brief Draw all circles (epicycles)
-     * @param frame Output frame
-     * @param positions Circle center positions
-     * @param t Current time
-     */
+    // OpenCV rendering methods
+    cv::Mat renderFrameOpenCV(const std::vector<cv::Point2d>& positions, double t);
     void drawCircles(cv::Mat& frame, const std::vector<cv::Point2d>& positions, double t);
-    
-    /**
-     * @brief Draw vectors from circle centers
-     * @param frame Output frame
-     * @param positions Circle center positions
-     */
     void drawVectors(cv::Mat& frame, const std::vector<cv::Point2d>& positions);
-    
-    /**
-     * @brief Draw the traced path
-     * @param frame Output frame
-     */
     void drawPath(cv::Mat& frame);
-    
-    /**
-     * @brief Draw origin marker (a0)
-     * @param frame Output frame
-     */
     void drawOriginMarker(cv::Mat& frame);
     
-    /**
-     * @brief Convert world coordinates to screen coordinates
-     * @param worldPoint Point in world space
-     * @return Point in screen space
-     */
+#ifdef USE_CAIRO
+    // Cairo rendering methods (high-quality)
+    cv::Mat renderFrameCairo(const std::vector<cv::Point2d>& positions, double t);
+    void drawCirclesCairo(struct _cairo* cr, const std::vector<cv::Point2d>& positions);
+    void drawVectorsCairo(struct _cairo* cr, const std::vector<cv::Point2d>& positions);
+    void drawPathCairo(struct _cairo* cr);
+    void drawOriginMarkerCairo(struct _cairo* cr);
+#endif
+    
     cv::Point worldToScreen(const cv::Point2d& worldPoint) const;
 };
 

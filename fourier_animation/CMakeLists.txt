@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(FourierAnimation LANGUAGES CXX CUDA)
+project(FourierAnimation LANGUAGES CXX)
 
 # C++ Standard
 set(CMAKE_CXX_STANDARD 17)
@@ -10,9 +10,14 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-# Compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+# Compiler flags (conditional for MSVC vs GCC/Clang)
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+endif()
 
 # Jetson AGX Orin specific settings
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
@@ -53,6 +58,24 @@ if(PkgConfig_FOUND)
         message(STATUS "GStreamer found: ${GSTREAMER_VERSION}")
         add_definitions(-DUSE_GSTREAMER)
     endif()
+    
+    # Cairo (optional, for high-quality rendering)
+    pkg_check_modules(CAIRO cairo)
+    if(CAIRO_FOUND)
+        message(STATUS "Cairo found: ${CAIRO_VERSION}")
+        add_definitions(-DUSE_CAIRO)
+    endif()
+endif()
+
+# Try finding Cairo via vcpkg/CMake if pkg-config didn't find it
+if(NOT CAIRO_FOUND)
+    find_package(unofficial-cairo CONFIG QUIET)
+    if(unofficial-cairo_FOUND)
+        set(CAIRO_FOUND TRUE)
+        set(CAIRO_LIBRARIES unofficial::cairo::cairo)
+        message(STATUS "Cairo found via vcpkg")
+        add_definitions(-DUSE_CAIRO)
+    endif()
 endif()
 
 # =============================================================================
@@ -60,7 +83,6 @@ endif()
 # =============================================================================
 
 set(HEADERS
-    include/colors.hpp
     include/fourier.hpp
     include/contour_extractor.hpp
     include/animation.hpp
@@ -68,7 +90,6 @@ set(HEADERS
 )
 
 set(SOURCES
-    src/colors.cpp
     src/fourier.cpp
     src/contour_extractor.cpp
     src/animation.cpp
@@ -84,6 +105,8 @@ add_executable(fourier_animation ${SOURCES} ${HEADERS})
 
 target_include_directories(fourier_animation PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/color/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/kissfft
     ${OpenCV_INCLUDE_DIRS}
 )
 
@@ -102,6 +125,14 @@ endif()
 if(GSTREAMER_FOUND)
     target_include_directories(fourier_animation PRIVATE ${GSTREAMER_INCLUDE_DIRS})
     target_link_libraries(fourier_animation PRIVATE ${GSTREAMER_LIBRARIES})
+endif()
+
+# Cairo linking if available
+if(CAIRO_FOUND)
+    if(CAIRO_INCLUDE_DIRS)
+        target_include_directories(fourier_animation PRIVATE ${CAIRO_INCLUDE_DIRS})
+    endif()
+    target_link_libraries(fourier_animation PRIVATE ${CAIRO_LIBRARIES})
 endif()
 
 # =============================================================================
@@ -123,5 +154,6 @@ message(STATUS "C++ standard:   ${CMAKE_CXX_STANDARD}")
 message(STATUS "OpenCV:         ${OpenCV_VERSION}")
 message(STATUS "CUDA:           ${CUDAToolkit_FOUND}")
 message(STATUS "GStreamer:      ${GSTREAMER_FOUND}")
+message(STATUS "Cairo:          ${CAIRO_FOUND}")
 message(STATUS "==============================================")
 message(STATUS "")
