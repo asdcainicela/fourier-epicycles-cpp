@@ -1,3 +1,38 @@
+# tex
+*.aux
+*.log
+*.out
+*.pdf
+*.bbl
+*.blg
+*.brf
+*.fls
+*.fns
+*.fmt
+*.idx
+*.ilg
+*.ind
+*.ist
+*.run
+*.syn
+*.toc
+*.vrb
+*.fdb_latexmk
+*.synctex.gz
+*.synctex
+*.synctex(busy)
+*.latexmk
+*.latexmkrc
+*.latexmkrc.bak
+*.listing
+
+#----
+external/
+build/
+.vscode/
+
+#----
+
 # Prerequisites
 *.d
 

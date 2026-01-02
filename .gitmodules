@@ -1,0 +1,6 @@
+[submodule "external/color"]
+	path = external/color
+	url = https://github.com/dmilos/color.git
+[submodule "external/kissfft"]
+	path = external/kissfft
+	url = https://github.com/mborgerding/kissfft.git
