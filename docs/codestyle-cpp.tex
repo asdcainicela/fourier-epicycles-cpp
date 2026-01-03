@@ -1,0 +1,57 @@
+% ============================================
+% CODESTYLE LOCAL: C++ moderno (VS Code style)
+% Fuente moderna + colores vibrantes
+% ============================================
+
+% Definir colores VS Code Dark+
+\definecolor{vsKeyword}{HTML}{569CD6}    % Azul keywords
+\definecolor{vsType}{HTML}{4EC9B0}       % Teal tipos
+\definecolor{vsString}{HTML}{CE9178}     % Salmon strings
+\definecolor{vsComment}{HTML}{6A9955}    % Verde comentarios
+\definecolor{vsNumber}{HTML}{B5CEA8}     % Verde claro números
+\definecolor{vsFunction}{HTML}{DCDCAA}   % Amarillo funciones
+\definecolor{vsBg}{HTML}{F8F9FA}         % Fondo claro
+
+\lstdefinestyle{vscode}{
+    language=C++,
+    backgroundcolor=\color{vsBg},
+    basicstyle=\fontfamily{pcr}\selectfont\small,
+    commentstyle=\color{vsComment}\itshape,
+    keywordstyle=\color{vsKeyword}\bfseries,
+    stringstyle=\color{vsString},
+    numberstyle=\tiny\color{codegray},
+    % Sin números de línea
+    numbers=none,
+    xleftmargin=15pt,
+    lineskip=-1.5pt, % Lineas mas juntas
+    tabsize=4,
+    columns=fullflexible,
+    keepspaces=true,
+    % Frame
+    frame=l,
+    framesep=8pt,
+    framerule=3pt,
+    rulecolor=\color{primary},
+    xleftmargin=20pt,
+    % Line breaks
+    breaklines=true,
+    breakatwhitespace=true,
+    postbreak=\mbox{\textcolor{codegray}{$\hookrightarrow$}\space},
+    % Más keywords C++
+    morekeywords={
+        nullptr,constexpr,auto,decltype,noexcept,override,final,
+        size_t,int64_t,uint32_t,
+        vector,string,complex,array,
+        std,cv,Mat,Point,Point2d,Scalar
+    },
+    emph={double,int,bool,void,return,for,if,else,while,const,struct},
+    emphstyle=\color{vsKeyword}\bfseries,
+    emph={[2]FourierCoefficient,kissfft},
+    emphstyle={[2]\color{vsType}},
+    showstringspaces=false,
+    showtabs=false,
+    % Escapar para inline
+    escapeinside={(*@}{@*)}
+}
+
+\lstset{style=vscode}

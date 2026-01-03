@@ -1,0 +1,94 @@
+\begin{minipage}[c]{0.35\textwidth}
+    Función periódica $f(t)$:
+    
+    \begin{equation}
+    f(t) = \sum_{n=-\infty}^{\infty} c_n \cdot e^{i n \omega t}
+    \end{equation}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.6\textwidth}
+    \begin{tikzpicture}[scale=2.8]
+        % --- LEFT: Epicycles (Generator) ---
+        % Circle 1
+        \draw[primary!80, thin] (0,0) circle (0.8);
+        \draw[-{Stealth[length=2mm]}, primary, line width=1.5pt] (0,0) -- (0.56,0.56);
+        
+        % Circle 2
+        \begin{scope}[shift={(0.56,0.56)}]
+            \draw[secondary!80, thin] (0,0) circle (0.4);
+            \draw[-{Stealth[length=2mm]}, secondary, line width=1.2pt] (0,0) -- (0.35,0.2);
+            
+            % Circle 3
+            \begin{scope}[shift={(0.35,0.2)}]
+                \draw[accent!80, thin] (0,0) circle (0.2);
+                \draw[-{Stealth[length=1.5mm]}, accent, line width=1pt] (0,0) -- (0.18,0.08);
+                
+                % Generator Point P (Red)
+                \coordinate (P) at (0.18,0.08);
+                \fill[secondary] (P) circle (2pt);
+            \end{scope}
+        \end{scope}
+        
+        % --- RIGHT: Trace (Result) ---
+        \def\xshift{2.2}
+        
+        % The Curve
+        \draw[secondary, thick, smooth] 
+            plot[shift={(\xshift,0)}] coordinates {
+                (1.09, 0.84) (1.2, 0.5) (0.8, 0.0) 
+                (0.4, 0.2) (0.1, 0.6) (0.3, 1.0) 
+                (0.8, 1.1) (1.09, 0.84)
+            };
+            
+        % Result Point P'
+        \coordinate (P_prime) at (1.09+\xshift, 0.84);
+        \fill[secondary] (P_prime) circle (2pt);
+        \node[secondary, font=\bfseries, anchor=west] at (1.15+\xshift, 0.84) {$f(t)$};
+        
+        % --- CONNECTION (Mirror Line) ---
+        \coordinate (P_abs) at (1.09, 0.84); 
+        \draw[secondary, dashed, thick] (P_abs) -- (P_prime);
+        
+    \end{tikzpicture}
+\end{minipage}
+
+\vspace{0.3cm}
+
+\textbf{Estructura de Datos ($c_n$)}
+\begin{lstlisting}[aboveskip=2pt]
+struct FourierCoefficient {
+    int freq; double amp, phase; 
+    complex<double> cn;
+};
+\end{lstlisting}
+
+\textbf{Función $f(t)$ (Suma)}
+\begin{lstlisting}[aboveskip=2pt]
+complex<double> eval(const vector<FourierCoefficient>& F, double t) {
+    complex<double> z(0,0);
+    for (const auto& c : F) // Suma vectorial
+        z += c.amplitude * polar(1.0, c.freq*t + c.phase);
+    return z;
+}
+\end{lstlisting}
+
+\vspace{0.8cm}
+
+\subsection{Cálculo de Coeficientes (DFT)}
+
+\begin{equation}
+C_n = \frac{1}{N} \sum_{k=0}^{N-1} z_k \cdot e^{-i \frac{2\pi n k}{N}}
+\end{equation}
+
+Cada $c_n$ se obtiene "promediando" la rotación inversa de los puntos.
+
+\begin{lstlisting}[aboveskip=2pt]
+vector<FourierCoefficient> computeDFT(const vector<complex<double>>& pts) {
+    size_t N = pts.size();
+    vector<complex<double>> res(N);
+    kissfft<double> fft(N, false);
+    fft.transform(pts.data(), res.data());
+    // ... mapeo a struct ...
+    return coeffs;
+}
+\end{lstlisting}

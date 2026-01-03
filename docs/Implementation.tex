@@ -1,0 +1,54 @@
+\section{IMPLEMENTACIÓN C++}
+
+\subsection{Estructura}
+
+\begin{lstlisting}[language=C++]
+struct FourierCoefficient {
+    int frequency;              // n
+    std::complex<double> cn;    // C_n
+    double amplitude;           // |C_n| = radio
+    double phase;               // arg(C_n) = angulo inicial
+};
+\end{lstlisting}
+
+\subsection{Cálculo DFT}
+
+\begin{lstlisting}[language=C++]
+std::vector<FourierCoefficient> computeDFT(
+    const std::vector<std::complex<double>>& points) 
+{
+    size_t N = points.size();
+    kissfft<double> fft(N, false);
+    
+    std::vector<std::complex<double>> result(N);
+    fft.transform(points.data(), result.data());
+    
+    std::vector<FourierCoefficient> coefficients;
+    for (size_t n = 0; n < N; ++n) {
+        FourierCoefficient coef;
+        coef.frequency = (n < N/2) ? n : n - N;
+        coef.cn = result[n] / static_cast<double>(N);
+        coef.amplitude = std::abs(coef.cn);
+        coef.phase = std::arg(coef.cn);
+        coefficients.push_back(coef);
+    }
+    return coefficients;
+}
+\end{lstlisting}
+
+\subsection{Evaluación en $t$}
+
+\begin{lstlisting}[language=C++]
+std::complex<double> evaluate(
+    const std::vector<FourierCoefficient>& coefficients,
+    double t) 
+{
+    std::complex<double> z(0.0, 0.0);
+    for (const auto& coef : coefficients) {
+        double angle = coef.frequency * t + coef.phase;
+        z += coef.amplitude * std::exp(
+            std::complex<double>(0.0, angle));
+    }
+    return z;
+}
+\end{lstlisting}

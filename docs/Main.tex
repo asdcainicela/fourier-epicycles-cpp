@@ -1,0 +1,58 @@
+% --------------------------------------------
+% Fourier Epicycles - Main Document
+% Uses tex-content-publisher template
+% --------------------------------------------
+
+% Load external preamble (base template)
+\input{../../tex-content-publisher/preamble}
+
+% Load custom local colors (override)
+\input{config-colors}
+
+% Load custom VS Code-style code highlighting
+\input{codestyle-cpp}
+
+% Additional packages
+\usetikzlibrary{arrows.meta, decorations.pathmorphing, calc, positioning}
+\usepackage{fontawesome5}
+
+% Hyperref
+\hypersetup{
+    colorlinks=true,
+    linkcolor=ColorBlueText,
+    urlcolor=ColorBlueText,
+    pdftitle={Fourier Epicycles},
+}
+
+% Header/Footer simple
+\ihead{
+    \begin{tikzpicture}[baseline]
+        \draw[primary, thick] (0,0) circle (0.3);
+        \draw[secondary, thick] (0.21,0.21) circle (0.15);
+        \fill[accent] (0.32,0.32) circle (1.5pt);
+    \end{tikzpicture}
+}
+\chead{\textcolor{ColorBlueText}{\bfseries\Large Fourier Epicycles}}
+\ohead{\textcolor{primary}{$\sum c_n e^{in\omega t}$}}
+\ifoot{\textcolor{codegray}{\small Matemáticas + Código}}
+\ofoot{\textcolor{codegray}{\small\faGithub\ fourier-epicycles-cpp}}
+
+% Tables
+\arrayrulecolor{primary}
+
+% --------------------------------------------
+\begin{document}
+    
+\setstretch{1.4}
+
+% Title
+\begin{center}
+    {\fontsize{44}{52}\bfseries\textcolor{ColorBlueText}{Epiciclos de Fourier}}
+\end{center}
+
+% Content
+\input{FourierSeries}
+
+\input{Animation}
+    
+\end{document}

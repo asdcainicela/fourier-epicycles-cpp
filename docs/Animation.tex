@@ -1,0 +1,36 @@
+
+
+\subsection{Dibujar Epiciclos}
+
+\begin{lstlisting}[language=C++]
+void drawEpicycles(cv::Mat& frame, 
+    const std::vector<FourierCoefficient>& coefficients,
+    double t, cv::Point2d center)
+{
+    cv::Point2d current = center;
+    
+    for (const auto& coef : coefficients) {
+        double angle = coef.frequency * t + coef.phase;
+        cv::Point2d next(
+            current.x + coef.amplitude * cos(angle),
+            current.y + coef.amplitude * sin(angle));
+        
+        // Circulo (orbita)
+        cv::circle(frame, current, coef.amplitude, 
+            cv::Scalar(100,100,100), 1, cv::LINE_AA);
+        // Vector (radio)
+        cv::line(frame, current, next, 
+            coef.color, 2, cv::LINE_AA);
+        
+        current = next;
+    }
+    cv::circle(frame, current, 3, cv::Scalar(0,255,0), -1);
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\begin{center}
+\textcolor{primary}{\rule{0.4\textwidth}{1.5pt}}\\[0.3cm]
+\textcolor{codegray}{\small\faGithub\ github.com/asdcainicela/fourier-epicycles-cpp}
+\end{center}
