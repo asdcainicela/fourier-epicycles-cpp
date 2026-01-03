@@ -4,13 +4,14 @@
 % --------------------------------------------
 
 % Load external preamble (base template)
-\input{../../tex-content-publisher/preamble}
+\def\tcppath{../../tex-content-publisher/}
+\input{\tcppath preamble}
 
 % Load custom local colors (override)
 \input{config-colors}
 
-% Load custom VS Code-style code highlighting
-\input{codestyle-cpp}
+% Load VS Code-style C++ highlighting from template
+\input{\tcppath codestyles/cpp-vscode}
 
 % Additional packages
 \usetikzlibrary{arrows.meta, decorations.pathmorphing, calc, positioning}
@@ -51,8 +52,8 @@
 \end{center}
 
 % Content
-\input{FourierSeries}
+\input{fourier-series}
 
-\input{Animation}
+\input{animation}
     
 \end{document}

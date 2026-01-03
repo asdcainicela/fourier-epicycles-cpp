@@ -1,0 +1,108 @@
+% ============================================
+% SERIES DE FOURIER Y EPICICLOS
+% ============================================
+
+% --- FILA 1: Texto/Formula | TikZ ---
+\begin{minipage}[c]{0.48\textwidth}
+    Función periódica:
+    \begin{equation}
+    f(t) = \sum_{n=-\infty}^{\infty} c_n \cdot e^{i n \omega t}
+    \end{equation}
+    
+    Cada término es un vector rotante. La suma genera una cadena de epiciclos cuyo extremo traza $f(t)$.
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.48\textwidth}
+    \begin{tikzpicture}[scale=2.6]
+        \draw[primary!80, thin] (0,0) circle (0.8);
+        \draw[-{Stealth[length=2mm]}, primary, line width=1.5pt] (0,0) -- (0.56,0.56);
+        \node[primary, font=\small] at (0.15, 0.45) {$|c_1|$};
+        
+        \begin{scope}[shift={(0.56,0.56)}]
+            \draw[secondary!80, thin] (0,0) circle (0.4);
+            \draw[-{Stealth[length=2mm]}, secondary, line width=1.2pt] (0,0) -- (0.35,0.2);
+            \node[secondary, font=\small] at (0.08, 0.28) {$|c_2|$};
+            
+            \begin{scope}[shift={(0.35,0.2)}]
+                \draw[accent!80, thin] (0,0) circle (0.2);
+                \draw[-{Stealth[length=1.5mm]}, accent, line width=1pt] (0,0) -- (0.18,0.08);
+                \fill[secondary] (0.18,0.08) circle (2pt);
+            \end{scope}
+        \end{scope}
+        
+        \def\xshift{2.0}
+        \draw[secondary, thick, smooth] 
+            plot[shift={(\xshift,0)}] coordinates {
+                (1.09, 0.84) (1.2, 0.5) (0.8, 0.0) 
+                (0.4, 0.2) (0.1, 0.6) (0.3, 1.0) 
+                (0.8, 1.1) (1.09, 0.84)
+            };
+        \fill[secondary] (1.09+\xshift, 0.84) circle (2pt);
+        \node[secondary, font=\bfseries, anchor=west] at (1.12+\xshift, 0.84) {$f(t)$};
+        \draw[secondary, dashed, thick] (1.09, 0.84) -- (1.09+\xshift, 0.84);
+    \end{tikzpicture}
+\end{minipage}
+
+
+% --- FILA 2: Struct | Tabla ---
+\begin{minipage}[t]{0.42\textwidth}
+\begin{lstlisting}[aboveskip=0pt]
+struct FourierCoefficient {
+    int frequency;
+    std::complex<double> cn;
+    double amplitude;
+    double phase;
+    // ...
+};
+\end{lstlisting}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.55\textwidth}
+\begin{tabular}{lll}
+\textbf{Campo} & \textbf{Matemática} & \textbf{Geometría} \\
+\hline
+\texttt{frequency} & $n$ & Velocidad rotación \\
+\texttt{cn} & $c_n$ & Coeficiente complejo \\
+\texttt{amplitude} & $|c_n|$ & Radio epiciclo \\
+\texttt{phase} & $\arg(c_n)$ & Ángulo inicial \\
+\end{tabular}
+\end{minipage}
+
+\vspace{0.8cm}
+
+% --- DFT ---
+\textbf{Cálculo DFT} \quad $\displaystyle C_n = \frac{1}{N} \sum_{k=0}^{N-1} z_k \cdot e^{-i \frac{2\pi n k}{N}}$
+
+\begin{lstlisting}[aboveskip=3pt]
+std::vector<FourierCoefficient> computeDFT(
+    const std::vector<std::complex<double>>& points) {
+    const size_t N = points.size();
+    std::vector<std::complex<double>> spectrum(N);
+    kissfft<double> fft(N, false);
+    fft.transform(points.data(), spectrum.data());
+    
+    std::vector<FourierCoefficient> coeffs;
+    for (size_t n = 0; n < N; ++n) {
+        auto cn = spectrum[n] / double(N);
+        coeffs.push_back({(n < N/2) ? (int)n : (int)n-(int)N,
+            std::abs(cn), std::arg(cn), cn});
+    }
+    return coeffs;
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+% --- EVALUATE ---
+\textbf{Evaluación} \quad $\displaystyle f(t) = \sum_n |c_n| \cdot e^{i(n t + \phi_n)}$
+
+\begin{lstlisting}[aboveskip=3pt]
+std::complex<double> evaluate(
+    const std::vector<FourierCoefficient>& coeffs, double t) {
+    std::complex<double> z(0, 0);
+    for (const auto& c : coeffs)
+        z += c.amplitude * std::exp(
+            std::complex<double>(0, c.frequency * t + c.phase));
+    return z;
+}
+\end{lstlisting}
