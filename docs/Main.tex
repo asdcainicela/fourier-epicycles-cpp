@@ -28,7 +28,7 @@
 % Header/Footer simple
 \ihead{
     \begin{tikzpicture}[baseline]
-        \node[anchor=center, font=\bfseries\large, text=primary] at (0,0) {C++};
+        \node[draw=none, fill=primary, rounded corners=3pt, inner sep=3pt, text=white, font=\bfseries\small] at (0,0) {C++};
     \end{tikzpicture}
 }
 \chead{\textcolor{ColorBlueText}{\bfseries\Large Fourier Epicycles}}
@@ -55,4 +55,11 @@
 
 \input{animation}
     
+\section*{References}
+\begin{itemize}
+    \item \textbf{OpenCV}: Computer Vision Library.
+    \item \textbf{KissFFT}: Fast Fourier Transform library (\href{https://github.com/mborgerding/kissfft}{GitHub}).
+    \item \textbf{Color}: C++ Color library (\href{https://github.com/ikalnytskyi/termcolor}{GitHub}).
+\end{itemize}
+
 \end{document}
