@@ -41,7 +41,7 @@
 
 \begin{minipage}[t]{0.47\textwidth}
 \vspace{0pt}
-\begin{lstlisting}[aboveskip=0pt]
+\begin{lstlisting}
 
 struct FourierCoefficient {
     int frequency;
@@ -76,7 +76,7 @@ $$
 $$
 
 Thus, the coefficient $C_n$ is the value of the transform at frequency $n$, and in code:
-\begin{lstlisting}[aboveskip=3pt]
+\begin{lstlisting}
 std::vector<FourierCoefficient> computeDFT(
     const std::vector<std::complex<double>>& points) {
     const size_t N = points.size();
@@ -97,7 +97,7 @@ std::vector<FourierCoefficient> computeDFT(
 \vspace{0.5cm}
 
 Thus, the evaluation of $ \displaystyle f(t) = \sum_n |c_n| \cdot e^{i(n t + \phi_n)}$ in code:
-\begin{lstlisting}[aboveskip=3pt]
+\begin{lstlisting}
 std::complex<double> evaluate(
     const std::vector<FourierCoefficient>& coeffs, double t) {
     std::complex<double> z(0, 0);
