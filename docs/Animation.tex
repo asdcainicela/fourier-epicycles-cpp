@@ -1,6 +1,6 @@
 
 
-\subsection{Dibujar Epiciclos}
+\subsection{Drawing Epicycles}
 
 \begin{lstlisting}[language=C++]
 void drawEpicycles(cv::Mat& frame, 
@@ -15,10 +15,10 @@ void drawEpicycles(cv::Mat& frame,
             current.x + coef.amplitude * cos(angle),
             current.y + coef.amplitude * sin(angle));
         
-        // Circulo (orbita)
+        // Circle (orbit)
         cv::circle(frame, current, coef.amplitude, 
             cv::Scalar(100,100,100), 1, cv::LINE_AA);
-        // Vector (radio)
+        // Vector (radius)
         cv::line(frame, current, next, 
             coef.color, 2, cv::LINE_AA);
         
@@ -32,5 +32,5 @@ void drawEpicycles(cv::Mat& frame,
 
 \begin{center}
 \textcolor{primary}{\rule{0.4\textwidth}{1.5pt}}\\[0.3cm]
-\textcolor{codegray}{\small\faGithub\ github.com/asdcainicela/fourier-epicycles-cpp}
+\textcolor{codegray}{\small\faGithub\ \href{https://github.com/asdcainicela/fourier-epicycles-cpp}{github.com/asdcainicela/fourier-epicycles-cpp}}
 \end{center}
