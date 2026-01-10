@@ -1,5 +1,5 @@
 #include "animation.hpp"
-#include <cmath>
+#include <numbers>
 #include <iostream>
 
 #ifdef USE_CAIRO
@@ -8,8 +8,7 @@
 
 namespace fourier {
 
-constexpr double PI = 3.14159265358979323846;
-constexpr double TWO_PI = 2.0 * PI;
+constexpr double TWO_PI = 2.0 * std::numbers::pi;
 
 class AnimationEngine::Impl {
 public:
@@ -343,9 +342,6 @@ void AnimationEngine::drawOriginMarker(cv::Mat& frame) {
              cv::Point(origin.x + markerSize, origin.y), markerColor, 1);
     cv::line(frame, cv::Point(origin.x, origin.y - markerSize),
              cv::Point(origin.x, origin.y + markerSize), markerColor, 1);
-    
-    cv::putText(frame, "a0", cv::Point(origin.x + 12, origin.y - 5),
-                cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 255), 1);
 }
 
 cv::Point AnimationEngine::worldToScreen(const cv::Point2d& worldPoint) const {

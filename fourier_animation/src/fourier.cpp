@@ -6,9 +6,6 @@
 
 namespace fourier {
 
-constexpr double PI = 3.14159265358979323846;
-constexpr double TWO_PI = 2.0 * PI;
-
 std::vector<FourierCoefficient> computeDFT(
     const std::vector<std::complex<double>>& points,
     int numCircles

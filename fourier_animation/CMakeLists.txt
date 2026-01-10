@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 project(FourierAnimation LANGUAGES CXX)
 
 # C++ Standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Build type
@@ -42,6 +42,14 @@ find_package(OpenCV REQUIRED COMPONENTS
 )
 message(STATUS "OpenCV version: ${OpenCV_VERSION}")
 message(STATUS "OpenCV include: ${OpenCV_INCLUDE_DIRS}")
+
+# spdlog (required)
+find_package(spdlog CONFIG REQUIRED)
+message(STATUS "spdlog found")
+
+# indicators (required, for progress bar)
+find_package(indicators CONFIG REQUIRED)
+message(STATUS "indicators found")
 
 # CUDA (optional, for hardware acceleration)
 find_package(CUDAToolkit)
@@ -112,6 +120,8 @@ target_include_directories(fourier_animation PRIVATE
 
 target_link_libraries(fourier_animation PRIVATE
     ${OpenCV_LIBS}
+    spdlog::spdlog_header_only
+    indicators::indicators
 )
 
 # CUDA linking if available
