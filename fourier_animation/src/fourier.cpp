@@ -56,20 +56,6 @@ std::vector<FourierCoefficient> computeDFT(
     return coefficients;
 }
 
-std::complex<double> evaluateFourier(
-    const std::vector<FourierCoefficient>& coefficients,
-    double t
-) {
-    std::complex<double> result(0.0, 0.0);
-    
-    for (const auto& coef : coefficients) {
-        double angle = coef.frequency * t + coef.phase;
-        std::complex<double> rotation(std::cos(angle), std::sin(angle));
-        result += coef.amplitude * rotation;
-    }
-    
-    return result;
-}
 
 std::vector<cv::Point2d> getEpicyclePositions(
     const std::vector<FourierCoefficient>& coefficients,
@@ -91,4 +77,4 @@ std::vector<cv::Point2d> getEpicyclePositions(
     return positions;
 }
 
-} // namespace fourier
+}
